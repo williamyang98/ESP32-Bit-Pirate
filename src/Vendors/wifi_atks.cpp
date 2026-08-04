@@ -260,6 +260,6 @@ void beaconCreate(const char* ssid, uint8_t channel, int spam) {
     // send packet
     for (int k = 0; k < 3; k++) {
         esp_wifi_80211_tx(WIFI_IF_STA, beaconPacket, sizeof(beaconPacket), 0);
-        if (!spam) vTaskDelay(1 / portTICK_RATE_MS);
+        if (!spam) vTaskDelay(1 / portTICK_PERIOD_MS);
     }
 }
