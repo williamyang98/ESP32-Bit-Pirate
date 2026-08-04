@@ -1,2 +1,5 @@
 .pio
 .vscode
+managed_components/
+sdkconfig.custom.old
+*.patch

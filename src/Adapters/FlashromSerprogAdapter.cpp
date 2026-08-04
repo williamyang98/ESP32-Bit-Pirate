@@ -142,6 +142,7 @@ void FlashromSerprogAdapter::applyCsModeAfterTransfer() {
     }
 }
 
+#ifndef NO_HARDWARE_USB
 void FlashromSerprogAdapter::onUsbEvent(void* arg, esp_event_base_t eventBase, int32_t eventId, void* eventData) {
     (void)arg;
     (void)eventBase;
@@ -160,6 +161,7 @@ void FlashromSerprogAdapter::onUsbEvent(void* arg, esp_event_base_t eventBase, i
         purgeInput();
     }
 }
+#endif
 
 void FlashromSerprogAdapter::handleCommand(uint8_t command, IInput& input) {
     switch (command) {

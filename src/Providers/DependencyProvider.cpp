@@ -29,7 +29,9 @@ DependencyProvider::DependencyProvider(ITerminalView &terminalView, IDeviceView 
       wifiScannerService(),
       i2sService(),
       sshService(),
+      #ifndef NO_HARDWARE_USB
       jtagService(),
+      #endif
       canService(),
       systemService(),
       utilityService(),
@@ -40,7 +42,9 @@ DependencyProvider::DependencyProvider(ITerminalView &terminalView, IDeviceView 
       subGhzService(),
       rfidService(),
       rf24Service(),
+      #ifndef NO_HARDWARE_USB
       usbService(),
+      #endif
       cellService(),
       fmService(),
       loRaService(),
@@ -87,7 +91,9 @@ DependencyProvider::DependencyProvider(ITerminalView &terminalView, IDeviceView 
       cellCallShell(terminalView, terminalInput, utilityService, userInputManager, argTransformer, atTransformer, cellService),
       cellSmsShell(terminalView, terminalInput, userInputManager, argTransformer, atTransformer, cellService),
       fmBroadcastShell(terminalView, terminalInput, userInputManager, argTransformer, fmService),
+      #ifndef NO_HARDWARE_USB
       usbAdapterShell(terminalView, terminalInput, utilityService, userInputManager, nvsService, systemService),
+      #endif
       mouseShell(terminalView, terminalInput, userInputManager, utilityService),
       meshtasticShell(terminalView, terminalInput, utilityService, userInputManager,
                       argTransformer, loRaService, meshtasticService),
@@ -106,7 +112,9 @@ DependencyProvider::DependencyProvider(ITerminalView &terminalView, IDeviceView 
       utilityController(terminalView, deviceView, terminalInput, utilityService, pinService, i2sService, userInputManager, pinAnalyzer, aliasManager, argTransformer, commandTransformer, sysInfoShell, guideShell, helpShell, profileShell),
       hdUartController(terminalView, terminalInput, deviceInput, hdUartService, uartService, argTransformer, userInputManager, helpShell),
       spiController(terminalView, terminalInput, utilityService, spiService, sdService, argTransformer, userInputManager, binaryAnalyzer, sdCardShell, spiFlashShell, spiEepromShell, helpShell),
+      #ifndef NO_HARDWARE_USB
       jtagController(terminalView, terminalInput, jtagService, userInputManager, helpShell, usbAdapterShell),
+      #endif
       twoWireController(terminalView, terminalInput, userInputManager, twoWireService, smartCardShell, helpShell),
       threeWireController(terminalView, terminalInput, userInputManager, threeWireService, argTransformer, threeWireEepromShell, helpShell),
       dioController(terminalView, terminalInput, deviceView, utilityService, pinService, argTransformer, helpShell, userInputManager),
@@ -119,7 +127,9 @@ DependencyProvider::DependencyProvider(ITerminalView &terminalView, IDeviceView 
       rfidController(terminalView, terminalInput, utilityService, rfidService, userInputManager, argTransformer, helpShell),
       rf24Controller(terminalView, terminalInput, deviceView, utilityService, rf24Service, pinService, argTransformer, userInputManager, helpShell),
       ethernetController(terminalView, deviceView, terminalInput, deviceInput, utilityService, wifiService, wifiScannerService, ethernetService, sshService, netcatService, nmapService, icmpService, nvsService, httpService, telnetService, argTransformer, jsonTransformer, userInputManager, modbusShell, helpShell),
+      #ifndef NO_HARDWARE_USB
       usbController(terminalView, terminalInput, deviceInput, utilityService, usbService, argTransformer, userInputManager, helpShell, usbAdapterShell, mouseShell),
+      #endif
       cellController(terminalView, terminalInput, utilityService, cellService, argTransformer, atTransformer, userInputManager, helpShell, cellCallShell, cellSmsShell),
       fmController(terminalView, terminalInput, deviceView, utilityService, fmService, argTransformer, userInputManager, helpShell, fmBroadcastShell),
       loRaController(terminalView, terminalInput, deviceView, utilityService, loRaService, littleFsService, i2sService,
@@ -146,7 +156,9 @@ UartService &DependencyProvider::getUartService() { return uartService; }
 OneWireService &DependencyProvider::getOneWireService() { return oneWireService; }
 TwoWireService &DependencyProvider::getTwoWireService() { return twoWireService; }
 InfraredService &DependencyProvider::getInfraredService() { return infraredService; }
+#ifndef NO_HARDWARE_USB
 UsbS3Service &DependencyProvider::getUsbService() { return usbService; }
+#endif
 SpiService &DependencyProvider::getSpiService() { return spiService; }
 HdUartService &DependencyProvider::getHdUartService() { return hdUartService; }
 PinService &DependencyProvider::getPinService() { return pinService; }
@@ -157,7 +169,9 @@ SshService &DependencyProvider::getSshService() { return sshService; }
 NetcatService &DependencyProvider::getNetcatService() { return netcatService; }
 NmapService &DependencyProvider::getNmapService() { return nmapService; }
 ICMPService &DependencyProvider::getICMPService() { return icmpService; }
+#ifndef NO_HARDWARE_USB
 JtagService &DependencyProvider::getJtagService() { return jtagService; }
+#endif
 CanService &DependencyProvider::getCanService() { return canService; }
 ModbusService &DependencyProvider::getModbusService() { return modbusService; }
 SystemService &DependencyProvider::getSystemService() { return systemService; }
@@ -178,10 +192,14 @@ I2cController &DependencyProvider::getI2cController() { return i2cController; }
 OneWireController &DependencyProvider::getOneWireController() { return oneWireController; }
 UtilityController &DependencyProvider::getUtilityController() { return utilityController; }
 InfraredController &DependencyProvider::getInfraredController() { return infraredController; }
+#ifndef NO_HARDWARE_USB
 UsbS3Controller &DependencyProvider::getUsbController() { return usbController; }
+#endif
 HdUartController &DependencyProvider::getHdUartController() { return hdUartController; }
 SpiController &DependencyProvider::getSpiController() { return spiController; }
+#ifndef NO_HARDWARE_USB
 JtagController &DependencyProvider::getJtagController() { return jtagController; }
+#endif
 TwoWireController &DependencyProvider::getTwoWireController() { return twoWireController; }
 ThreeWireController &DependencyProvider::getThreeWireController() { return threeWireController; }
 DioController &DependencyProvider::getDioController() { return dioController; }
@@ -237,7 +255,9 @@ ProfileShell &DependencyProvider::getProfileShell() { return profileShell; }
 CellCallShell &DependencyProvider::getCellCallShell() { return cellCallShell; }
 CellSmsShell &DependencyProvider::getCellSmsShell() { return cellSmsShell; }
 FmBroadcastShell &DependencyProvider::getFmBroadcastShell() { return fmBroadcastShell; }
+#ifndef NO_HARDWARE_USB
 UsbAdapterShell &DependencyProvider::getUsbAdapterShell() { return usbAdapterShell; }
+#endif
 MouseShell &DependencyProvider::getMouseShell() { return mouseShell; }
 MeshtasticShell &DependencyProvider::getMeshtasticShell() { return meshtasticShell; }
 

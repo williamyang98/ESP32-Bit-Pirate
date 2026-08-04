@@ -4,13 +4,13 @@
 #include <Preferences.h>
 #include <WiFi.h>
 #include <Arduino.h>
-#include <FastLED.h>
 
 #define NVS_SSID_KEY "ssid"
 #define NVS_PASS_KEY "pass"
 
-#define NUM_LEDS 1
 #if LED_TYPE_RGB
+#include <FastLED.h>
+#define NUM_LEDS 1
 CRGB leds[NUM_LEDS];
 #endif
 
@@ -33,6 +33,9 @@ bool setupDefaultWifi() {
     FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS);
     leds[0] = CRGB::White;
     FastLED.show();
+    #else
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH);
     #endif
 
     String ssid, password;
@@ -42,6 +45,10 @@ bool setupDefaultWifi() {
         FastLED.show();
         delay(2000);
         FastLED.clear(true);
+        #else
+        digitalWrite(LED_PIN, HIGH);
+        delay(2000);
+        digitalWrite(LED_PIN, LOW);
         #endif
         return false;
     }
@@ -55,6 +62,10 @@ bool setupDefaultWifi() {
             FastLED.show();
             delay(1000);
             FastLED.clear(true);
+            #else
+            digitalWrite(LED_PIN, HIGH);
+            delay(1000);
+            digitalWrite(LED_PIN, LOW);
             #endif
             return true;
         }
@@ -66,6 +77,10 @@ bool setupDefaultWifi() {
       FastLED.show();
       delay(1000);
       FastLED.clear(true);
+    #else
+      digitalWrite(LED_PIN, HIGH);
+      delay(1000);
+      digitalWrite(LED_PIN, LOW);
     #endif
     
     return false;

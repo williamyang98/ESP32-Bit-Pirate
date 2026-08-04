@@ -12,6 +12,7 @@ struct UsbUartBridgeConfig {
     bool uartInverted;
 };
 
+#ifndef NO_HARDWARE_USB
 class UsbUartBridgeAdapter {
 public:
     static void run(const UsbUartBridgeConfig& config, IInput& input, IHostSerial& hostSerial);
@@ -31,3 +32,4 @@ private:
     static void pumpUsbToUart();
     static void pumpBridgeOnce();
 };
+#endif

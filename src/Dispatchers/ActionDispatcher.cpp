@@ -141,9 +141,11 @@ void ActionDispatcher::dispatchCommand(const TerminalCommand& cmd) {
         case ModeEnum::Infrared:
             provider.getInfraredController().handleCommand(cmd);
             break;
+        #ifndef NO_HARDWARE_USB
         case ModeEnum::USB:
             provider.getUsbController().handleCommand(cmd);
             break;
+        #endif
         case ModeEnum::Bluetooth:
             provider.getBluetoothController().handleCommand(cmd);
             break;
@@ -152,9 +154,11 @@ void ActionDispatcher::dispatchCommand(const TerminalCommand& cmd) {
             // Rerender pinout view after WiFi commands
             setCurrentMode(state.getCurrentMode());
             break;
+        #ifndef NO_HARDWARE_USB
         case ModeEnum::JTAG:
             provider.getJtagController().handleCommand(cmd);
             break;
+        #endif
         case ModeEnum::I2S:
             provider.getI2sController().handleCommand(cmd);
             break;
@@ -326,18 +330,22 @@ void ActionDispatcher::setCurrentMode(ModeEnum newMode) {
         case ModeEnum::Infrared:
             provider.getInfraredController().ensureConfigured();
             break;
+        #ifndef NO_HARDWARE_USB
         case ModeEnum::USB:
             provider.getUsbController().ensureConfigured();
             break;
+        #endif
         case ModeEnum::Bluetooth:
             provider.getBluetoothController().ensureConfigured();
             break;
         case ModeEnum::WiFi:
             provider.getWifiController().ensureConfigured();
             break;
+        #ifndef NO_HARDWARE_USB
         case ModeEnum::JTAG:
             provider.getJtagController().ensureConfigured();
             break;
+        #endif
         case ModeEnum::I2S:
             provider.getI2sController().ensureConfigured();
             break;

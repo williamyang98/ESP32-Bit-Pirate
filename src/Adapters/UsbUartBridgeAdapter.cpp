@@ -1,4 +1,5 @@
 #include "UsbUartBridgeAdapter.h"
+#ifndef NO_HARDWARE_USB
 #include "driver/gpio.h"
 #include <USBCDC.h>
 #include <algorithm>
@@ -190,3 +191,4 @@ void UsbUartBridgeAdapter::run(const UsbUartBridgeConfig& config, IInput& input,
         }
     }
 }
+#endif

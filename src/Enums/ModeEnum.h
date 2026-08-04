@@ -17,10 +17,14 @@ enum class ModeEnum {
     DIO,
     LED,
     Infrared,
+    #ifndef NO_HARDWARE_USB
     USB,
+    #endif
     Bluetooth,
     WiFi,
+    #ifndef NO_HARDWARE_USB
     JTAG,
+    #endif
     I2S,
     CAN_,
     ETHERNET,
@@ -54,10 +58,14 @@ public:
         {ModeEnum::DIO,       "DIO"},
         {ModeEnum::LED,       "LED"},
         {ModeEnum::Infrared,  "INFRARED"},
+        #ifndef NO_HARDWARE_USB
         {ModeEnum::USB,       "USB"},
+        #endif
         {ModeEnum::Bluetooth, "BLUETOOTH"},
         {ModeEnum::WiFi,      "WIFI"},
+        #ifndef NO_HARDWARE_USB
         {ModeEnum::JTAG,      "JTAG"},
+        #endif
         {ModeEnum::I2S,       "I2S"},
         {ModeEnum::CAN_,      "CAN"},
         {ModeEnum::ETHERNET,  "ETHERNET"},

@@ -68,6 +68,7 @@ OneShotBootMode NvsService::consumeOneShotBootMode() {
     return mode;
 }
 
+#ifndef NO_HARDWARE_USB
 void NvsService::saveOneShotUsbUartBridgeConfig(uint8_t rxPin, uint8_t txPin, bool inverted) {
     preferences.putUChar("oneshot_uart_rx", rxPin);
     preferences.putUChar("oneshot_uart_tx", txPin);
@@ -85,6 +86,7 @@ void NvsService::clearOneShotUsbUartBridgeConfig() {
     preferences.remove("oneshot_uart_tx");
     preferences.remove("uart_inv");
 }
+#endif
 
 void NvsService::saveOneShotFlashromSerprogConfig(uint8_t csPin, uint8_t sckPin, uint8_t misoPin, uint8_t mosiPin, uint32_t frequency) {
     preferences.putUChar("oneshot_fr_cs", csPin);

@@ -13,7 +13,9 @@
 
 enum class OneShotBootMode : uint8_t {
     None = 0,
+    #ifndef NO_HARDWARE_USB
     UsbUartBridge = 1,
+    #endif
     FlashromSerprog = 2,
     SumpLogicAnalyzer = 3,
     OpenOcdBusPirate = 4,
@@ -49,9 +51,11 @@ public:
     OneShotBootMode getOneShotBootMode();
     void clearOneShotBootMode();
     OneShotBootMode consumeOneShotBootMode();
+    #ifndef NO_HARDWARE_USB
     void saveOneShotUsbUartBridgeConfig(uint8_t rxPin, uint8_t txPin, bool inverted);
     void getOneShotUsbUartBridgeConfig(uint8_t defaultRxPin, uint8_t defaultTxPin, bool defaultInverted, uint8_t& rxPin, uint8_t& txPin, bool& inverted);
     void clearOneShotUsbUartBridgeConfig();
+    #endif
     void saveOneShotFlashromSerprogConfig(uint8_t csPin, uint8_t sckPin, uint8_t misoPin, uint8_t mosiPin, uint32_t frequency);
     void getOneShotFlashromSerprogConfig(uint8_t defaultCsPin, uint8_t defaultSckPin, uint8_t defaultMisoPin, uint8_t defaultMosiPin, uint32_t defaultFrequency, uint8_t& csPin, uint8_t& sckPin, uint8_t& misoPin, uint8_t& mosiPin, uint32_t& frequency);
     void clearOneShotFlashromSerprogConfig();

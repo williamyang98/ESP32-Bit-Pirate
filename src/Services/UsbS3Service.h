@@ -1,5 +1,5 @@
 #pragma once
-
+#ifndef NO_HARDWARE_USB
 #include <Arduino.h>
 #include <USB.h>
 #include <USBMSC.h>
@@ -94,3 +94,4 @@ private:
     bool dumpedThisAttach = false;
     inline static const char* TAG_USBHOST = "UsbHost";
 };
+#endif

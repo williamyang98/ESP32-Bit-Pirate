@@ -53,7 +53,9 @@ void SysInfoShell::cmdSummary() {
     terminalView.println("\n=== System Summary ===");
     terminalView.println("Model         : " + systemService.getChipModel());
     terminalView.println("Uptime        : " + std::to_string(systemService.getUptimeSeconds()) + " s");
+    #ifndef DEVICE_CUSTOM
     terminalView.println("Temperature   : " + systemService.getInternalTemperatureCStr() + " °C");
+    #endif
     terminalView.println("Screen        : " + std::to_string((deviceView.getBrightness() * 100) / 255) + " % bright");
     
     const int rr = systemService.getResetReason();
@@ -78,7 +80,9 @@ void SysInfoShell::cmdHardwareInfo() {
     terminalView.println("Model             : " + systemService.getChipModel());
     terminalView.println("CPU cores         : " + std::to_string(systemService.getChipCores()));
     terminalView.println("CPU freq          : " + std::to_string(systemService.getCpuFreqMhz()) + " MHz");
+    #ifndef DEVICE_CUSTOM
     terminalView.println("CPU temp          : " + systemService.getInternalTemperatureCStr() + " °C");
+    #endif
 
     // Features (WiFi/BT/BLE)
     const uint32_t f = systemService.getChipFeaturesRaw();

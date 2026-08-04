@@ -36,7 +36,9 @@ private:
     static void purgeInput();
     static void applyCsModeBeforeTransfer();
     static void applyCsModeAfterTransfer();
+    #ifndef NO_HARDWARE_USB
     static void onUsbEvent(void* arg, esp_event_base_t eventBase, int32_t eventId, void* eventData);
+    #endif
     static void handleCommand(uint8_t command, IInput& input);
     static void handleSpiOperation(IInput& input);
     static bool readByte(IInput& input, uint8_t& value, uint32_t timeoutMs = 1000);

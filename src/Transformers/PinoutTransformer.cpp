@@ -80,7 +80,7 @@ PinoutConfig PinoutTransformer::build(ModeEnum mode) const {
             });
             break;
         }
-
+        #ifndef NO_HARDWARE_USB
         case ModeEnum::JTAG: {
             std::vector<std::string> lines;
             const auto& pins = state.getJtagScanPins();
@@ -94,7 +94,7 @@ PinoutConfig PinoutTransformer::build(ModeEnum mode) const {
             config.setMappings(lines);
             break;
         }
-
+        #endif
         case ModeEnum::I2S:
             config.setMappings({
                 "BCLK GPIO " + std::to_string(state.getI2sBclkPin()),

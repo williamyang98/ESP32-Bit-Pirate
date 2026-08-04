@@ -1,5 +1,5 @@
 #pragma once
-
+#ifndef NO_HARDWARE_USB
 #include "Interfaces/ITerminalView.h"
 #include "Interfaces/IInput.h"
 #include "Interfaces/IUtilityService.h"
@@ -55,3 +55,4 @@ private:
     };
     inline static constexpr size_t actionsCount = sizeof(actions) / sizeof(actions[0]);
 };
+#endif

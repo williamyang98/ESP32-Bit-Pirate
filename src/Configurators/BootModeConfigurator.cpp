@@ -101,6 +101,7 @@ bool BootModeConfigurator::configure() {
 
     nvsService.open();
     OneShotBootMode mode = nvsService.consumeOneShotBootMode();
+    #ifndef NO_HARDWARE_USB
     if (mode == OneShotBootMode::UsbUartBridge) {
         nvsService.getOneShotUsbUartBridgeConfig(
             state.getUartRxPin(),
@@ -112,6 +113,7 @@ bool BootModeConfigurator::configure() {
         );
         nvsService.clearOneShotUsbUartBridgeConfig();
     }
+    #endif
     if (mode == OneShotBootMode::FlashromSerprog) {
         nvsService.getOneShotFlashromSerprogConfig(
             state.getSpiCSPin(),
@@ -211,10 +213,12 @@ bool BootModeConfigurator::configure() {
     nvsService.close();
 
     switch (mode) {
+        #ifndef NO_HARDWARE_USB
         case OneShotBootMode::UsbUartBridge:
             showOneShotBootMode(mode, usbUartBridgeConfig, flashromSerprogConfig, busPirateAvrdudeConfig, bpio2Config, sumpLogicAnalyzerConfig, openOcdBusPirateConfig, infraredToyConfig, subGhzRawCdcConfig);
             UsbUartBridgeAdapter::run(usbUartBridgeConfig, deviceInput, hostSerial);
             return true;
+        #endif
 
         case OneShotBootMode::FlashromSerprog:
             showOneShotBootMode(mode, usbUartBridgeConfig, flashromSerprogConfig, busPirateAvrdudeConfig, bpio2Config, sumpLogicAnalyzerConfig, openOcdBusPirateConfig, infraredToyConfig, subGhzRawCdcConfig);
@@ -267,6 +271,7 @@ void BootModeConfigurator::showOneShotBootMode(OneShotBootMode mode,
                                                const InfraredToyConfig& infraredToyConfig,
                                                const SubGhzRawCdcConfig& subGhzRawCdcConfig) {
     switch (mode) {
+        #ifndef NO_HARDWARE_USB
         case OneShotBootMode::UsbUartBridge:
             deviceView.adapterMode(
                 "USB-UART Bridge",
@@ -277,6 +282,7 @@ void BootModeConfigurator::showOneShotBootMode(OneShotBootMode mode,
                 }
             );
             break;
+        #endif
 
         case OneShotBootMode::FlashromSerprog:
             deviceView.adapterMode(

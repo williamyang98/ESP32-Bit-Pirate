@@ -1,4 +1,5 @@
 #include "UsbAdapterShell.h"
+#ifndef NO_HARDWARE_USB
 #include <algorithm>
 #include <vector>
 
@@ -391,3 +392,4 @@ void UsbAdapterShell::rebootSubGhzRawCdc() {
         "Example: screen /dev/ttyACM0 38400"
     );
 }
+#endif

@@ -398,7 +398,11 @@ void SystemService::reboot(bool hard) const {
 }
 
 void SystemService::rebootToBootloader() const {
+    // https://esp32.com/viewtopic.php?t=33180
+    // ESP32 doesn't support this only S2/S3 and Cx series chips
+    #ifndef DEVICE_CUSTOM
     REG_WRITE(RTC_CNTL_OPTION1_REG, RTC_CNTL_FORCE_DOWNLOAD_BOOT);
+    #endif
     delay(100);
     esp_restart();
 }
@@ -427,6 +431,8 @@ std::string SystemService::getInfraredBackend() const {
     #endif
 }
 
+// ESP32 has no software support for its very buggy internal temperature sensor so we remove it completely
+#ifndef DEVICE_CUSTOM
 float SystemService::getInternalTemperatureC() const {
     temperature_sensor_handle_t temp_handle = nullptr;
 
@@ -468,3 +474,4 @@ std::string SystemService::getInternalTemperatureCStr() const {
     snprintf(buf, sizeof(buf), "%.2f", temp);
     return std::string(buf);
 }
+#endif

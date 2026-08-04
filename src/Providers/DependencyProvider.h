@@ -18,7 +18,9 @@ and injecting shared instances of core components
 #include "Services/OneWireService.h"
 #include "Services/TwoWireService.h"
 #include "Services/InfraredService.h"
+#ifndef NO_HARDWARE_USB
 #include "Services/UsbS3Service.h"
+#endif
 #include "Services/HdUartService.h"
 #include "Services/SpiService.h"
 #include "Services/PinService.h"
@@ -30,7 +32,9 @@ and injecting shared instances of core components
 #include "Services/NetcatService.h"
 #include "Services/NmapService.h"
 #include "Services/ICMPService.h"
+#ifndef NO_HARDWARE_USB
 #include "Services/JtagService.h"
+#endif
 #include "Services/CanService.h"
 #include "Services/SystemService.h"
 #include "Services/UtilityService.h"
@@ -43,7 +47,9 @@ and injecting shared instances of core components
 #include "Services/RfidService.h"
 #include "Services/Rf24Service.h"
 #include "Services/LittleFsService.h"
+#ifndef NO_HARDWARE_USB
 #include "Services/UsbS3Service.h"
+#endif
 #include "Services/CellService.h"
 #include "Services/FmService.h"
 #include "Services/LoRaService.h"
@@ -52,9 +58,13 @@ and injecting shared instances of core components
 #include "Controllers/I2cController.h"
 #include "Controllers/OneWireController.h"
 #include "Controllers/UtilityController.h"
+#ifndef NO_HARDWARE_USB
 #include "Controllers/UsbS3Controller.h"
+#endif
 #include "Controllers/HdUartController.h"
+#ifndef NO_HARDWARE_USB
 #include "Controllers/JtagController.h"
+#endif
 #include "Controllers/SpiController.h"
 #include "Controllers/TwoWireController.h"
 #include "Controllers/ThreeWireController.h"
@@ -69,7 +79,9 @@ and injecting shared instances of core components
 #include "Controllers/EthernetController.h"
 #include "Controllers/RfidController.h"
 #include "Controllers/Rf24Controller.h"
+#ifndef NO_HARDWARE_USB
 #include "Controllers/UsbS3Controller.h"
+#endif
 #include "Controllers/CellController.h"
 #include "Controllers/FmController.h"
 #include "Controllers/ExpanderController.h"
@@ -110,7 +122,9 @@ and injecting shared instances of core components
 #include "Shells/CellCallShell.h"
 #include "Shells/CellSmsShell.h"
 #include "Shells/FmBroadcastShell.h"
+#ifndef NO_HARDWARE_USB
 #include "Shells/UsbAdapterShell.h"
+#endif
 #include "Shells/MouseShell.h"
 #include "Shells/MeshtasticShell.h"
 #include "Configurators/TerminalTypeConfigurator.h"
@@ -139,7 +153,9 @@ public:
     TwoWireService &getTwoWireService();
     ThreeWireService& getThreeWireService();
     InfraredService &getInfraredService();
+    #ifndef NO_HARDWARE_USB
     UsbS3Service &getUsbService();
+    #endif
     SpiService &getSpiService();
     HdUartService &getHdUartService();
     PinService &getPinService();
@@ -151,7 +167,9 @@ public:
     NetcatService &getNetcatService();
     NmapService &getNmapService();
     ICMPService &getICMPService();
+    #ifndef NO_HARDWARE_USB
     JtagService &getJtagService();
+    #endif
     CanService &getCanService();
     SystemService &getSystemService();
     UtilityService &getUtilityService();
@@ -174,10 +192,14 @@ public:
     UtilityController &getUtilityController();
     OneWireController &getOneWireController();
     InfraredController &getInfraredController();
+    #ifndef NO_HARDWARE_USB
     UsbS3Controller &getUsbController();
+    #endif
     HdUartController &getHdUartController();
     SpiController &getSpiController();
+    #ifndef NO_HARDWARE_USB
     JtagController &getJtagController();
+    #endif
     TwoWireController &getTwoWireController();
     ThreeWireController &getThreeWireController();
     DioController &getDioController();
@@ -236,7 +258,9 @@ public:
     CellCallShell &getCellCallShell();
     CellSmsShell &getCellSmsShell();
     FmBroadcastShell &getFmBroadcastShell();
+    #ifndef NO_HARDWARE_USB
     UsbAdapterShell &getUsbAdapterShell();
+    #endif
     MouseShell &getMouseShell();
     MeshtasticShell &getMeshtasticShell();
 
@@ -281,7 +305,9 @@ private:
     NetcatService netcatService;
     NmapService nmapService;
     ICMPService icmpService;
+    #ifndef NO_HARDWARE_USB
     JtagService jtagService;
+    #endif
     CanService canService;
     SystemService systemService;
     UtilityService utilityService;
@@ -293,7 +319,9 @@ private:
     RfidService rfidService;
     Rf24Service rf24Service;
     CellService cellService;
+    #ifndef NO_HARDWARE_USB
     UsbS3Service usbService;
+    #endif
     FmService fmService;
     LoRaService loRaService;
     MeshtasticService meshtasticService;
@@ -306,7 +334,9 @@ private:
     InfraredController infraredController;
     HdUartController hdUartController;
     SpiController spiController;
+    #ifndef NO_HARDWARE_USB
     JtagController jtagController;
+    #endif
     TwoWireController twoWireController;
     ThreeWireController threeWireController;
     DioController dioController;
@@ -319,7 +349,9 @@ private:
     SubGhzController subGhzController;
     RfidController rfidController;
     Rf24Controller rf24Controller;
+    #ifndef NO_HARDWARE_USB
     UsbS3Controller usbController;
+    #endif
     CellController cellController;
     FmController fmController;
     LoRaController loRaController;
@@ -367,7 +399,9 @@ private:
     CellCallShell cellCallShell;
     CellSmsShell cellSmsShell;
     FmBroadcastShell fmBroadcastShell;
+    #ifndef NO_HARDWARE_USB
     UsbAdapterShell usbAdapterShell;
+    #endif
     MouseShell mouseShell;
     MeshtasticShell meshtasticShell;
 

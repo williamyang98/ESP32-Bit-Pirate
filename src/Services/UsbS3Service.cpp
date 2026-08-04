@@ -1,4 +1,5 @@
 #include "UsbS3Service.h"
+#ifndef NO_HARDWARE_USB
 #include <sstream>  
 #include <esp_mac.h>
 #include <esp32-hal-tinyusb.h>
@@ -745,3 +746,4 @@ std::string UsbS3Service::getUsbSerialFromEfuseMac() {
 
     return std::string("ESP32-BP-") + macSuffix;
 }
+#endif
