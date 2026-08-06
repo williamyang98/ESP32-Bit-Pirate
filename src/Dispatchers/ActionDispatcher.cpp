@@ -141,11 +141,13 @@ void ActionDispatcher::dispatchCommand(const TerminalCommand& cmd) {
         case ModeEnum::Infrared:
             provider.getInfraredController().handleCommand(cmd);
             break;
-        #ifndef NO_HARDWARE_USB
         case ModeEnum::USB:
+            #ifndef NO_HARDWARE_USB
             provider.getUsbController().handleCommand(cmd);
+            #else
+            provider.getTerminalView().println("USB is disabled in this build.");
+            #endif
             break;
-        #endif
         case ModeEnum::Bluetooth:
             provider.getBluetoothController().handleCommand(cmd);
             break;
@@ -154,11 +156,13 @@ void ActionDispatcher::dispatchCommand(const TerminalCommand& cmd) {
             // Rerender pinout view after WiFi commands
             setCurrentMode(state.getCurrentMode());
             break;
-        #ifndef NO_HARDWARE_USB
         case ModeEnum::JTAG:
+            #ifndef NO_HARDWARE_USB
             provider.getJtagController().handleCommand(cmd);
+            #else
+            provider.getTerminalView().println("JTAG is disabled in this build.");
+            #endif
             break;
-        #endif
         case ModeEnum::I2S:
             provider.getI2sController().handleCommand(cmd);
             break;
