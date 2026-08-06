@@ -8,6 +8,9 @@
 #include <esp_log.h>
 #include <cstring>
 
+struct StreamBufferDef_t;
+typedef struct StreamBufferDef_t * StreamBufferHandle_t;
+
 class WebSocketServer {
 public:
     WebSocketServer(httpd_handle_t sharedServer);
@@ -20,9 +23,12 @@ public:
 
 private:
     static esp_err_t wsHandler(httpd_req_t *req);
-    static void closeClient(httpd_handle_t server, int fd);
+    void closeClient();
+    void sendTextAsync(const std::string& msg);
+    static void sendTextAsyncTask(void *_params);
 
     httpd_handle_t server;
-    static inline std::deque<char> buffer;
-    static inline int clientFd = -1;
+    // static inline std::deque<char> buffer;
+    StreamBufferHandle_t buffer = nullptr;
+    int clientFd = -1;
 };

@@ -18,5 +18,5 @@ public:
     void waitPress() override;
     
 private:
-    WebSocketServer server;
+    WebSocketServer& server;
 };

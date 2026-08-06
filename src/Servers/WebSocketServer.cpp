@@ -1,10 +1,17 @@
 #include "WebSocketServer.h"
-
+#include <freertos/FreeRTOS.h>
+#include <freertos/stream_buffer.h>
+#include <assert.h>
+#include <esp_log.h>
 
 static const char* TAG = "WebSocketServer";
 
 WebSocketServer::WebSocketServer(httpd_handle_t sharedServer)
-    : server(sharedServer) {}
+    : server(sharedServer)
+{
+    buffer = xStreamBufferCreate(1024, 1);
+    assert(buffer != NULL);
+}
 
 void WebSocketServer::setupRoutes() {
     static httpd_uri_t ws_uri = {
@@ -20,13 +27,23 @@ void WebSocketServer::setupRoutes() {
 
 esp_err_t WebSocketServer::wsHandler(httpd_req_t *req) {
     WebSocketServer* self = static_cast<WebSocketServer*>(req->user_ctx);
+
+    const int newClientFd = httpd_req_to_sockfd(req);
+    assert(newClientFd >= 0);
+
+    if (self->clientFd != newClientFd) {
+        if (self->clientFd >= 0) {
+            ESP_LOGI(TAG, "Closing previous client: fd=%d", self->clientFd);
+            self->closeClient();
+        }
+        self->clientFd = newClientFd;
+        ESP_LOGI(TAG, "New webSocket client connected: fd=%d, addr=%p", newClientFd, (void*)self);
+    }
+
+    assert(self->clientFd >= 0);
     
     if (req->method == HTTP_GET) {
-        int newClientFd = httpd_req_to_sockfd(req);
-        if (clientFd >= 0 && clientFd != newClientFd) {
-            closeClient(self->server, clientFd);
-        }
-        clientFd = newClientFd;
+        ESP_LOGI(TAG, "Successfully established connection with client on get request: fd=%d", self->clientFd);
         return ESP_OK;
     }
     
@@ -45,64 +62,84 @@ esp_err_t WebSocketServer::wsHandler(httpd_req_t *req) {
     ret = httpd_ws_recv_frame(req, &frame, frame.len);
     if (ret != ESP_OK) {
         free(frame.payload);
-        if (clientFd == httpd_req_to_sockfd(req)) {
-            clientFd = -1;
-        }
+        self->closeClient();
         return ret;
     }
     frame.payload[frame.len] = '\0';
     
     // Push chars one by one into buffer
-    for (size_t i = 0; i < frame.len; ++i) {
-        self->buffer.push_back(((char*)frame.payload)[i]);
-    }
-
+    xStreamBufferSend(self->buffer, frame.payload, frame.len, portMAX_DELAY);
     free(frame.payload);
-
-    if (frame.len > 0) {
-        pinMode(LED_PIN, OUTPUT);  
-        digitalWrite(LED_PIN, HIGH);
-        delay(100);
-        digitalWrite(LED_PIN, LOW);
-        pinMode(LED_PIN, INPUT);  
-    }
 
     return ESP_OK;
 }
 
 char WebSocketServer::readCharBlocking() {
-    while (buffer.empty()) {
-        delay(10);
+    char c = 0x00;
+    while (true) {
+        const size_t total_read = xStreamBufferReceive(buffer, &c, sizeof(c), portMAX_DELAY);
+        if (total_read != 1) continue;
+        break;
     }
-    char c = buffer.front();
-    buffer.pop_front();
     return c;
 }
 
 char WebSocketServer::readCharNonBlocking() {
-    if (buffer.empty()) return KEY_NONE;
-
-    char c = buffer.front();
-    buffer.pop_front();
-
+    char c = 0x00;
+    const size_t total_read = xStreamBufferReceive(buffer, &c, sizeof(c), 10/portTICK_PERIOD_MS);
+    if (total_read != 1) return KEY_NONE;
     return c;
 }
 
+void WebSocketServer::sendTextAsync(const std::string& msg) {
+    httpd_ws_frame_t ws_pkt = {};
+    ws_pkt.type = HTTPD_WS_TYPE_TEXT;
+    ws_pkt.payload = (uint8_t*)msg.c_str();
+    ws_pkt.len = msg.length();
+
+    esp_err_t err = httpd_ws_send_frame_async(server, clientFd, &ws_pkt);
+    if (err != ESP_OK) {
+        ESP_LOGI(TAG, "Failed to send message: fd=%d, msg='%s', err=%s", clientFd, msg.c_str(), esp_err_to_name(err));
+        closeClient();
+    }
+}
+
+struct SendTextTaskParams {
+    WebSocketServer* server;
+    std::string msg;
+    SendTextTaskParams(WebSocketServer* _server, const std::string& _msg)
+    : server(_server), msg(_msg)
+    {}
+};
+
+// enqueue for httpd server
+void WebSocketServer::sendTextAsyncTask(void *_params) {
+    SendTextTaskParams* params = static_cast<struct SendTextTaskParams*>(_params);
+    assert(params != nullptr);
+    params->server->sendTextAsync(params->msg);
+    delete params;
+}
+
 void WebSocketServer::sendText(const std::string& msg) {
-    if (clientFd < 0) return;
+    if (clientFd < 0) {
+        ESP_LOGW(TAG, "No client connected, cannot send message: addr=%p, msg='%s'", (void*)this, msg.c_str());
+        return;
+    }
 
     // Sanitize UTF8
     std::string safeMsg = sanitizeUtf8(msg);
 
-    httpd_ws_frame_t ws_pkt = {};
-    ws_pkt.type = HTTPD_WS_TYPE_TEXT;
-    ws_pkt.payload = (uint8_t*) safeMsg.c_str();
-    ws_pkt.len = safeMsg.length();
-
-    esp_err_t err = httpd_ws_send_frame_async(server, clientFd, &ws_pkt);
-    if (err != ESP_OK) {
-        closeClient(server, clientFd);
+    #if 0
+    struct SendTextTaskParams* params = new struct SendTextTaskParams(this, safeMsg);
+    assert(params != nullptr);
+    const esp_err_t status = httpd_queue_work(server, WebSocketServer::sendTextAsyncTask, params);
+    if (status != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to queue work for sending message: %s", esp_err_to_name(status));
+        delete params;
     }
+    #else
+    sendTextAsync(safeMsg);
+    #endif
 }
 
 std::string WebSocketServer::sanitizeUtf8(const std::string& input) {
@@ -139,11 +176,14 @@ std::string WebSocketServer::sanitizeUtf8(const std::string& input) {
     return output;
 }
 
-void WebSocketServer::closeClient(httpd_handle_t server, int fd) {
-    if (fd < 0) return;
-    httpd_sess_trigger_close(server, fd);
-    if (clientFd == fd) {
-        clientFd = -1;
-        buffer.clear();
+void WebSocketServer::closeClient() {
+    if (clientFd < 0) {
+        ESP_LOGW(TAG, "Tried to close when there was no client connected");
+        return;
     }
+    httpd_sess_trigger_close(server, clientFd);
+    ESP_LOGI(TAG, "Closed client: fd=%d", clientFd);
+    clientFd = -1;
+    // buffer.clear();
+    xStreamBufferReset(buffer);
 }

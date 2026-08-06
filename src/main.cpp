@@ -226,6 +226,7 @@ void setup() {
             config.lru_purge_enable = true;
             config.recv_wait_timeout = 11;
             config.send_wait_timeout = 11;
+            config.core_id = 0; // Arduino loop runs on core 1 so run on core 0 to avoid blocking
 
             // DNS server for captive portal if AP mode
             if (terminalType == TerminalTypeEnum::WiFiAp) {
