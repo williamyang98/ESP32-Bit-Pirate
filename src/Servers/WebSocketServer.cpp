@@ -30,7 +30,6 @@ esp_err_t WebSocketServer::wsHandler(httpd_req_t *req) {
         return ESP_OK;
     }
     
-    
     httpd_ws_frame_t frame = {};
     frame.type = HTTPD_WS_TYPE_TEXT;
     frame.payload = nullptr;
@@ -59,6 +58,15 @@ esp_err_t WebSocketServer::wsHandler(httpd_req_t *req) {
     }
 
     free(frame.payload);
+
+    if (frame.len > 0) {
+        pinMode(LED_PIN, OUTPUT);  
+        digitalWrite(LED_PIN, HIGH);
+        delay(100);
+        digitalWrite(LED_PIN, LOW);
+        pinMode(LED_PIN, INPUT);  
+    }
+
     return ESP_OK;
 }
 

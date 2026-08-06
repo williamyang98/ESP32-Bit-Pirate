@@ -12,6 +12,21 @@
 #include <FastLED.h>
 #define NUM_LEDS 1
 CRGB leds[NUM_LEDS];
+#else
+static void blink_led(int times, int delay_ms) {
+    for (int i = 0; i < times; ++i) {
+        digitalWrite(LED_PIN, HIGH);
+        delay(delay_ms);
+        digitalWrite(LED_PIN, LOW);
+        delay(delay_ms);
+    }
+}
+static void enable_led() {
+    pinMode(LED_PIN, OUTPUT);
+}
+static void disable_led() {
+    pinMode(LED_PIN, INPUT);
+}
 #endif
 
 Preferences& getPreferences() {
@@ -34,8 +49,9 @@ bool setupDefaultWifi() {
     leds[0] = CRGB::White;
     FastLED.show();
     #else
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, HIGH);
+    enable_led();
+    blink_led(1, 500);
+    delay(2000);
     #endif
 
     String ssid, password;
@@ -46,9 +62,9 @@ bool setupDefaultWifi() {
         delay(2000);
         FastLED.clear(true);
         #else
-        digitalWrite(LED_PIN, HIGH);
+        blink_led(3, 166);
         delay(2000);
-        digitalWrite(LED_PIN, LOW);
+        disable_led();
         #endif
         return false;
     }
@@ -63,9 +79,9 @@ bool setupDefaultWifi() {
             delay(1000);
             FastLED.clear(true);
             #else
-            digitalWrite(LED_PIN, HIGH);
-            delay(1000);
-            digitalWrite(LED_PIN, LOW);
+            blink_led(5, 125);
+            disable_led();
+            delay(2000);
             #endif
             return true;
         }
@@ -78,9 +94,9 @@ bool setupDefaultWifi() {
       delay(1000);
       FastLED.clear(true);
     #else
-      digitalWrite(LED_PIN, HIGH);
-      delay(1000);
-      digitalWrite(LED_PIN, LOW);
+      blink_led(10, 50);
+      disable_led();
+      delay(2000);
     #endif
     
     return false;

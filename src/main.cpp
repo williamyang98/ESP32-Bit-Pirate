@@ -179,8 +179,22 @@ void setup() {
 
         if (webIp == "0.0.0.0") {
             terminalType = TerminalTypeEnum::SerialPort;
+            pinMode(LED_PIN, OUTPUT);
+            for (int i = 0; i < 50; i++) {
+                digitalWrite(LED_PIN, HIGH);
+                delay(30);
+                digitalWrite(LED_PIN, LOW);
+                delay(30);
+            }
+            pinMode(LED_PIN, INPUT);
         } else {
             state.setTerminalIp(webIp);
+            pinMode(LED_PIN, OUTPUT);
+            digitalWrite(LED_PIN, HIGH);
+            delay(500);
+            digitalWrite(LED_PIN, LOW);
+            delay(500);
+            pinMode(LED_PIN, INPUT);
         }
     }
     state.setTerminalMode(terminalType);
